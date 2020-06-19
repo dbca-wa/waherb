@@ -1,0 +1,8 @@
+.env
+*.pyc
+*.csv
+.python-version
+media/
+staticfiles/
+logs/
+waherb.egg-info/
