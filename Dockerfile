@@ -20,6 +20,8 @@ RUN poetry config virtualenvs.create false \
 # Install the project.
 FROM python_libs_waherb
 COPY manage.py gunicorn.py ./
+COPY herbarium ./herbarium
+COPY nomenclature ./nomenclature
 COPY waherb ./waherb
 RUN python manage.py collectstatic --noinput
 # Run the application as the www-data user.
