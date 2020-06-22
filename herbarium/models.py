@@ -1,7 +1,21 @@
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
-from waherb.utils import AuditMixin, ActiveMixin
+from django.contrib.postgres.indexes import GinIndex
+from waherb.utils import AuditMixin, ActiveMixin, smart_truncate
 from nomenclature.models import Name
+
+
+class TexpressData(models.Model):
+    """Data from the legacy Texpress database, loaded for the purposes of migration & archive.
+    """
+    row = JSONField(default=dict, blank=True)
+
+    class Meta:
+        verbose_name_plural = 'texpress data'
+        indexes = [GinIndex(fields=['row'])]
+
+    def __str__(self):
+        return smart_truncate(str(self.row), length=200)
 
 
 ATTACHMENT_TYPE_CHOICES = (

@@ -3,7 +3,7 @@ from reversion.admin import VersionAdmin
 from waherb.utils import ModelDescMixin, ActiveAdminMixin, WALeafletGeoAdmin
 from .models import (
     Attachment, Annotation, Transaction, Agent, Address, Project, Permit, CollectingEvent,
-    Determination, Specimen,
+    Determination, Specimen, TexpressData,
 )
 
 
@@ -95,3 +95,9 @@ class DeterminationAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     raw_id_fields = ('agent', 'name', 'specimen')
     readonly_fields = ('metadata',)
     search_fields = ('agent__name', 'name__name', 'specimen__barcode')
+
+
+@admin.register(TexpressData)
+class TexpressDataAdmin(admin.ModelAdmin):
+    readonly_fields = ('row',)
+    search_fields = ('row',)
