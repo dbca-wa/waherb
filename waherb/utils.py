@@ -176,8 +176,12 @@ class ActiveMixin(models.Model):
         Overide the standard delete method; sets effective_to the current date
         and time.
         '''
-        self.effective_to = timezone.now()
-        super(ActiveMixin, self).save(*args, **kwargs)
+        if 'delete_permanent' in kwargs and kwargs['delete_permanent']:
+            kwargs.pop('delete_permanent')
+            super().delete(*args, **kwargs)
+        else:
+            self.effective_to = timezone.now()
+            super().save(*args, **kwargs)
 
 
 class ModelDescMixin(ModelAdmin):
