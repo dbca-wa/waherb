@@ -92,5 +92,6 @@ class DeterminationAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     date_hierarchy = 'date'
     list_display = ('agent', 'name', 'specimen', 'date', 'modified', 'modifier')
+    raw_id_fields = ('agent', 'name', 'specimen')
     readonly_fields = ('metadata',)
     search_fields = ('agent__name', 'name__name', 'specimen__barcode')

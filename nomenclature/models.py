@@ -1,5 +1,6 @@
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.utils import timezone
 from mptt.models import MPTTModel, TreeForeignKey
 from waherb.utils import AuditMixin, ActiveMixin, smart_truncate
 
@@ -37,10 +38,14 @@ TAXONOMIC_RANK_CHOICES = (
 )
 
 
-class Name(MPTTModel, AuditMixin, ActiveMixin):
+class Name(MPTTModel, AuditMixin):
     """This model represents a name for a taxonomic grouping that has been published in the
     scientific literature.
     May or may not be associated with a Name object in the NSL database.
+
+    NOTE: we can't use ActiveMixin with this model class, as the custom Manager messes with the
+    TreeManager class that MPTTModel provides.
+    We just add the effective_to field on the model manually, plus any other methods needed.
     """
     name = models.CharField(
         max_length=512, unique=True, help_text='A name that has been validly published in a reference.')
@@ -53,6 +58,15 @@ class Name(MPTTModel, AuditMixin, ActiveMixin):
         Reference, blank=True, help_text='Published references containing an instance of this name.')
     nsl_url = models.URLField(max_length=256, blank=True, null=True)
     metadata = JSONField(default=dict, blank=True)
+    effective_to = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+    def delete(self, *args, **kwargs):
+        if 'delete_permanent' in kwargs and kwargs['delete_permanent']:
+            kwargs.pop('delete_permanent')
+            super().delete(*args, **kwargs)
+        else:
+            self.effective_to = timezone.now()
+            super().save(*args, **kwargs)
