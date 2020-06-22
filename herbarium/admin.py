@@ -11,13 +11,18 @@ from .models import (
 class AttachmentAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     list_display = ('upload', 'modified', 'modifier')
-    search_fields = ('upload', 'description')
+    list_filter = ('type',)
+    readonly_fields = ('metadata',)
+    search_fields = ('type', 'upload', 'description')
 
 
 @admin.register(Annotation)
 class AnnotationAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     list_display = ('type', 'annotation', 'modified', 'modifier')
+    list_filter = ('type',)
+    readonly_fields = ('metadata',)
+    search_fields = ('type', 'annotation')
 
 
 @admin.register(Transaction)
@@ -25,6 +30,7 @@ class TransactionAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     list_display = ('type', 'description', 'modified', 'modifier')
     list_filter = ('type',)
+    readonly_fields = ('metadata',)
     search_fields = ('type', 'description')
 
 
@@ -33,6 +39,8 @@ class AgentAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     list_display = ('name', 'type', 'email', 'member_of', 'modified', 'modifier')
     list_filter = ('type',)
+    #raw_id_fields = ('attachments',)
+    readonly_fields = ('metadata',)
     search_fields = ('name', 'type', 'email', 'member_of__name')
 
 
@@ -40,6 +48,7 @@ class AgentAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
 class AddressAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     list_display = ('agent', 'address_line_1', 'suburb', 'state', 'modified', 'modifier')
+    readonly_fields = ('metadata',)
     search_fields = (
         'agent__name', 'address_line_1', 'address_line_2', 'suburb', 'city', 'state',
         'postcode', 'country')
@@ -49,6 +58,7 @@ class AddressAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
 class ProjectAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     list_display = ('name', 'modified', 'modifier')
+    readonly_fields = ('metadata',)
     search_fields = ('name',)
 
 
@@ -56,6 +66,7 @@ class ProjectAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
 class PermitAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     list_display = ('permit_no', 'modified', 'modifier')
+    readonly_fields = ('metadata',)
     search_fields = ('permit_no',)
 
 
@@ -64,6 +75,7 @@ class CollectingEventAdmin(ModelDescMixin, ActiveAdminMixin, WALeafletGeoAdmin, 
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     date_hierarchy = 'date'
     list_display = ('agent', 'project', 'permit', 'date', 'modified', 'modifier')
+    readonly_fields = ('metadata',)
     search_fields = ('agent__name', 'project__name', 'permit__permit_no', 'description', 'location_description')
 
 
@@ -71,6 +83,7 @@ class CollectingEventAdmin(ModelDescMixin, ActiveAdminMixin, WALeafletGeoAdmin, 
 class SpecimenAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     list_display = ('barcode', 'event', 'collection', 'linear_sequence', 'modified', 'modifier')
+    readonly_fields = ('metadata',)
     search_fields = ('barcode', 'collection', 'linear_sequence')
 
 
@@ -79,4 +92,5 @@ class DeterminationAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     date_hierarchy = 'date'
     list_display = ('agent', 'name', 'specimen', 'date', 'modified', 'modifier')
+    readonly_fields = ('metadata',)
     search_fields = ('agent__name', 'name__name', 'specimen__barcode')
