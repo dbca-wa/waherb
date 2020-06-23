@@ -119,6 +119,7 @@ class TexpressDataAdmin(admin.ModelAdmin):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         # For performance, run a raw query over the indexed row_text column using the search term.
         # Then, use the list of PKs from that the filter the queryset.
-        pks = [i.pk for i in TexpressData.objects.raw("SELECT * FROM herbarium_texpressdata WHERE row_text ILIKE '%%{}%%'".format(search_term))]
-        queryset = queryset.filter(pk__in=pks)
+        if search_term:
+            pks = [i.pk for i in TexpressData.objects.raw("SELECT * FROM herbarium_texpressdata WHERE row_text ILIKE '%%{}%%'".format(search_term))]
+            queryset = queryset.filter(pk__in=pks)
         return queryset, use_distinct
