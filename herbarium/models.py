@@ -9,6 +9,7 @@ class TexpressData(models.Model):
     """Data from the legacy Texpress database, loaded for the purposes of migration & archive.
     """
     row = JSONField(default=dict, blank=True)
+    row_text = models.TextField(help_text='Document for search', blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'texpress data'

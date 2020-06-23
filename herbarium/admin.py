@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
+import json
 from reversion.admin import VersionAdmin
 from waherb.utils import ModelDescMixin, ActiveAdminMixin, WALeafletGeoAdmin
 from .models import (
@@ -99,5 +101,15 @@ class DeterminationAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
 
 @admin.register(TexpressData)
 class TexpressDataAdmin(admin.ModelAdmin):
-    readonly_fields = ('row',)
-    search_fields = ('row',)
+    fields = ('row_pre',)
+    readonly_fields = ('row_pre',)
+    search_fields = ('row_text',)
+    show_full_result_count = False
+    save_on_top = True
+
+    def row_pre(self, obj):
+        return mark_safe('<pre>{}</pre>'.format(json.dumps(obj.row, indent=2, sort_keys=True)))
+    row_pre.short_description = 'row data'
+
+    def has_delete_permission(self, request, obj=None):
+        return False
