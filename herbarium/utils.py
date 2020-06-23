@@ -1,10 +1,33 @@
+import json
+from datetime import datetime
 from .models import TexpressData
+
+
+def import_texpress_data(path='/var/www/archive/texpress_json_rows.txt'):
+    """Utility function to import Texpress data from the flat file output.
+    """
+    f = open(path)
+    count = 0
+    then = datetime.now()
+    print('Starting import of Texpress data')
+    new_records = []
+
+    for line in f.readlines():
+        new_records.append(TexpressData(row=json.loads(line), row_text=line))
+        count += 1
+        if count % 1000 == 0:  # Commit our new records to the database.
+            TexpressData.objects.bulk_create(new_records)
+            new_records = []
+            elapsed = (datetime.now() - then).seconds
+            print('Processed {} records, {:.2f} s/1000 records'.format(count, elapsed / (count / 1000)))
 
 
 def sanitise_data():
     """Utility function to clean up imported Texpress data.
     """
     count = 0
+    then = datetime.now()
+    print('Starting sanitise')
 
     for tex in TexpressData.objects.iterator():  # Use iterator() or we'll be OOM.
         # Merge multi-element string fields into a single string:
@@ -30,4 +53,5 @@ def sanitise_data():
 
         count += 1
         if count % 1000 == 0:
-            print('Processed {}'.format(count))
+            elapsed = (datetime.now() - then).seconds
+            print('Processed {} records, {:.2f} s/1000 records'.format(count, elapsed / (count / 1000)))
