@@ -112,4 +112,13 @@ class TexpressDataAdmin(admin.ModelAdmin):
     row_pre.short_description = 'row data'
 
     def has_delete_permission(self, request, obj=None):
+        # No one gets to delete these records (they're RO archives).
         return False
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        # For performance, run a raw query over the indexed row_text column using the search term.
+        # Then, use the list of PKs from that the filter the queryset.
+        pks = [i.pk for i in TexpressData.objects.raw("SELECT * FROM herbarium_texpressdata WHERE row_text ILIKE '%%{}%%'".format(search_term))]
+        queryset = queryset.filter(pk__in=pks)
+        return queryset, use_distinct
