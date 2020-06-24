@@ -219,7 +219,7 @@ class Specimen(AuditMixin, ActiveMixin):
     metadata = JSONField(default=dict, blank=True)
 
 
-class Determination(AuditMixin, ActiveMixin):
+class Designation(AuditMixin, ActiveMixin):
     """This represents an event where a person classified a Specimen as a particular taxon.
     """
     person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name='determiner')

@@ -5,7 +5,7 @@ from reversion.admin import VersionAdmin
 from waherb.utils import ModelDescMixin, ActiveAdminMixin, WALeafletGeoAdmin
 from .models import (
     Attachment, Annotation, Transaction, Organisation, Person, Address, Project, Permit,
-    Location, CollectingEvent, Determination, Specimen, TexpressData,
+    Location, CollectingEvent, Designation, Specimen, TexpressData,
 )
 
 
@@ -110,8 +110,8 @@ class SpecimenAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     search_fields = ('barcode', 'collection', 'linear_sequence')
 
 
-@admin.register(Determination)
-class DeterminationAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
+@admin.register(Designation)
+class DesignationAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     date_hierarchy = 'date'
     list_display = ('person', 'name', 'specimen', 'date', 'modified', 'modifier')
