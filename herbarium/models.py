@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.indexes import GinIndex
+import json
 from waherb.utils import AuditMixin, ActiveMixin, smart_truncate
 from nomenclature.models import Name
 
@@ -16,7 +17,10 @@ class TexpressData(models.Model):
         indexes = [GinIndex(fields=['row'])]
 
     def __str__(self):
-        return smart_truncate(str(self.row), length=200)
+        # Don't just use the string repr of the JSONField, as that outputs single quotes
+        # which is confusing to end users as it differs from what's stored in the DB.
+        s = '{}'.format(json.dumps(self.row, sort_keys=True, separators=(',', ':')))
+        return smart_truncate(s, length=200)
 
 
 ATTACHMENT_TYPE_CHOICES = (

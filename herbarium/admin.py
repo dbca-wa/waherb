@@ -108,7 +108,7 @@ class TexpressDataAdmin(admin.ModelAdmin):
     save_on_top = True
 
     def row_pre(self, obj):
-        return mark_safe('<pre>{}</pre>'.format(json.dumps(obj.row, indent=2, sort_keys=True)))
+        return mark_safe('<pre>{}</pre>'.format(json.dumps(obj.row, indent=2, sort_keys=True, separators=(',', ':'))))
     row_pre.short_description = 'row data'
 
     def has_delete_permission(self, request, obj=None):
@@ -120,6 +120,7 @@ class TexpressDataAdmin(admin.ModelAdmin):
         # For performance, run a raw query over the indexed row_text column using the search term.
         # Then, use the list of PKs from that the filter the queryset.
         if search_term:
-            pks = [i.pk for i in TexpressData.objects.raw("SELECT * FROM herbarium_texpressdata WHERE row_text ILIKE '%%{}%%'".format(search_term))]
+            raw_qs = TexpressData.objects.raw("SELECT * FROM herbarium_texpressdata WHERE row_text ILIKE '%%{}%%'".format(search_term))
+            pks = [i.pk for i in raw_qs]
             queryset = queryset.filter(pk__in=pks)
         return queryset, use_distinct

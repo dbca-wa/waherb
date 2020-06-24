@@ -13,13 +13,18 @@ def import_texpress_data(path='/var/www/archive/texpress_json_rows.txt'):
     new_records = []
 
     for line in f.readlines():
-        new_records.append(TexpressData(row=json.loads(line), row_text=line))
+        new_records.append(TexpressData(row=json.loads(line), row_text=line.strip()))
         count += 1
         if count % 1000 == 0:  # Commit our new records to the database.
             TexpressData.objects.bulk_create(new_records)
             new_records = []
             elapsed = (datetime.now() - then).seconds
-            print('Processed {} records, {:.2f} s/1000 records'.format(count, elapsed / (count / 1000)))
+            print('Processed {} records, {:.2f} sec/1000 records'.format(count, elapsed / (count / 1000)))
+            then = datetime.now()
+
+    if new_records:
+        TexpressData.objects.bulk_create(new_records)
+        new_records = []
 
 
 def sanitise_data():
@@ -54,4 +59,5 @@ def sanitise_data():
         count += 1
         if count % 1000 == 0:
             elapsed = (datetime.now() - then).seconds
-            print('Processed {} records, {:.2f} s/1000 records'.format(count, elapsed / (count / 1000)))
+            print('Processed {} records, {:.2f} sec/1000 records'.format(count, elapsed / (count / 1000)))
+            then = datetime.now()
