@@ -2,8 +2,8 @@ from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.indexes import GinIndex
 import json
-from waherb.utils import AuditMixin, ActiveMixin, smart_truncate
 from nomenclature.models import Name
+from waherb.utils import AuditMixin, ActiveMixin, smart_truncate
 
 
 class TexpressData(models.Model):

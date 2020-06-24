@@ -4,6 +4,9 @@ from .models import Name
 
 
 def import_wacensus():
+    """This script assumes that you have kingdoms.csv, names.csv and taxon_tree.csv files
+    in the project root.
+    """
     print('Creating Kingdoms')
     f = open('kingdoms.csv', 'r')
     reader = csv.reader(f)

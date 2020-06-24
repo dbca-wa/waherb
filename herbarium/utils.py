@@ -16,13 +16,13 @@ def import_texpress_data(path='/var/www/archive/texpress_json_rows.txt'):
         new_records.append(TexpressData(row=json.loads(line), row_text=line.strip()))
         count += 1
         if count % 1000 == 0:  # Commit our new records to the database.
-            TexpressData.objects.bulk_create(new_records)
+            TexpressData.objects.bulk_create(new_records)  # bulk_create is WAY faster.
             new_records = []
             elapsed = (datetime.now() - then).seconds
             print('Processed {} records, {:.2f} sec/1000 records'.format(count, elapsed / (count / 1000)))
             then = datetime.now()
 
-    if new_records:
+    if new_records:  # Save any remaining records in our list.
         TexpressData.objects.bulk_create(new_records)
         new_records = []
 
@@ -34,7 +34,8 @@ def sanitise_data():
     then = datetime.now()
     print('Starting sanitise')
 
-    for tex in TexpressData.objects.iterator():  # Use iterator() or we'll be OOM.
+    for tex in TexpressData.objects.iterator():  # Use iterator() or we'll be OOM in no time.
+        # TODO: switch to using bulk_update instead.
         # Merge multi-element string fields into a single string:
         if 'vegetati' in tex.row and isinstance(tex.row['vegetati'], list):
             tex.row['vegetati'] = ' '.join([i for i in tex.row['vegetati'] if i])
@@ -48,10 +49,11 @@ def sanitise_data():
             tex.row['voucher'] = ' '.join([i for i in tex.row['voucher'] if i])
         if 'fre' in tex.row and isinstance(tex.row['fre'], list):
             tex.row['fre'] = ' '.join([i for i in tex.row['fre'] if i])
-        # Convert single-element arrays into just that element value.
-        for key, val in tex.row.items():
-            if isinstance(val, list) and len(val) == 1:
-                tex.row[key] = val[0]
+        # Convert single-element arrays into just that single element's value.
+        # Probably no longer needed.
+        #for key, val in tex.row.items():
+        #    if isinstance(val, list) and len(val) == 1:
+        #        tex.row[key] = val[0]
         # Save JSON data into the indexed row_text field.
         tex.row_text = str(tex.row)
         tex.save()
