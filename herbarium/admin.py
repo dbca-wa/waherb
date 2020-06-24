@@ -4,8 +4,8 @@ import json
 from reversion.admin import VersionAdmin
 from waherb.utils import ModelDescMixin, ActiveAdminMixin, WALeafletGeoAdmin
 from .models import (
-    Attachment, Annotation, Transaction, Agent, Address, Project, Permit, CollectingEvent,
-    Determination, Specimen, TexpressData,
+    Attachment, Annotation, Transaction, Organisation, Person, Address, Project, Permit,
+    Location, CollectingEvent, Determination, Specimen, TexpressData,
 )
 
 
@@ -36,24 +36,32 @@ class TransactionAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     search_fields = ('type', 'description')
 
 
-@admin.register(Agent)
-class AgentAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
-    exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
-    list_display = ('name', 'type', 'email', 'member_of', 'modified', 'modifier')
-    list_filter = ('type',)
-    #raw_id_fields = ('attachments',)
-    readonly_fields = ('metadata',)
-    search_fields = ('name', 'type', 'email', 'member_of__name')
-
-
 @admin.register(Address)
 class AddressAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
-    list_display = ('agent', 'address_line_1', 'suburb', 'state', 'modified', 'modifier')
+    list_display = ('address_line_1', 'suburb', 'state', 'modified', 'modifier')
     readonly_fields = ('metadata',)
     search_fields = (
-        'agent__name', 'address_line_1', 'address_line_2', 'suburb', 'city', 'state',
+        'address_line_1', 'address_line_2', 'suburb', 'city', 'state',
         'postcode', 'country')
+
+
+@admin.register(Organisation)
+class OrganisationAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
+    exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
+    list_display = ('name', 'email', 'modified', 'modifier')
+    readonly_fields = ('metadata',)
+    search_fields = ('name', 'email', 'notes')
+
+
+@admin.register(Person)
+class PersonAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
+    exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
+    list_display = ('name', 'type', 'email', 'modified', 'modifier')
+    list_filter = ('type',)
+    #raw_id_fields = ('attachments',)
+    readonly_fields = ('metadata',)
+    search_fields = ('name', 'type', 'email', 'notes')
 
 
 @admin.register(Project)
@@ -72,13 +80,26 @@ class PermitAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     search_fields = ('permit_no',)
 
 
+@admin.register(Location)
+class LocationAdmin(ModelDescMixin, ActiveAdminMixin, WALeafletGeoAdmin, VersionAdmin):
+    exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
+    list_display = ('description', 'spatial_accuracy', 'modifier')
+    list_filter = ('spatial_accuracy',)
+    readonly_fields = ('metadata',)
+    search_fields = ('description',)
+    model_description = """This represents a physical location in the world. It might be a point
+    or a polygon, and it might not be 100% accurate."""
+    change_list_template = 'admin/herbarium/change_list.html'
+
+
 @admin.register(CollectingEvent)
-class CollectingEventAdmin(ModelDescMixin, ActiveAdminMixin, WALeafletGeoAdmin, VersionAdmin):
+class CollectingEventAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     date_hierarchy = 'date'
-    list_display = ('agent', 'project', 'permit', 'date', 'modified', 'modifier')
+    list_display = ('person', 'project', 'permit', 'date', 'modified', 'modifier')
+    list_filter = ('temporal_accuracy',)
     readonly_fields = ('metadata',)
-    search_fields = ('agent__name', 'project__name', 'permit__permit_no', 'description', 'location_description')
+    search_fields = ('person__name', 'project__name', 'permit__permit_no', 'description', 'location_description')
 
 
 @admin.register(Specimen)
@@ -93,10 +114,10 @@ class SpecimenAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
 class DeterminationAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     exclude = ('created', 'creator', 'modified', 'modifier', 'effective_to')
     date_hierarchy = 'date'
-    list_display = ('agent', 'name', 'specimen', 'date', 'modified', 'modifier')
-    raw_id_fields = ('agent', 'name', 'specimen')
+    list_display = ('person', 'name', 'specimen', 'date', 'modified', 'modifier')
+    raw_id_fields = ('person', 'name', 'specimen')
     readonly_fields = ('metadata',)
-    search_fields = ('agent__name', 'name__name', 'specimen__barcode')
+    search_fields = ('person__name', 'name__name', 'specimen__barcode')
 
 
 @admin.register(TexpressData)
@@ -116,10 +137,13 @@ class TexpressDataAdmin(admin.ModelAdmin):
         return False
 
     def get_search_results(self, request, queryset, search_term):
+        print(search_term)
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        # The default query that the ORM generates for this is pretty slow.
         # For performance, run a raw query over the indexed row_text column using the search term.
         # Then, use the list of PKs from that the filter the queryset.
         if search_term:
+            search_term = search_term.replace('": "', '":"')  # Just in case someone still adds a space between key & value.
             raw_qs = TexpressData.objects.raw("SELECT * FROM herbarium_texpressdata WHERE row_text ILIKE '%%{}%%'".format(search_term))
             pks = [i.pk for i in raw_qs]
             queryset = queryset.filter(pk__in=pks)

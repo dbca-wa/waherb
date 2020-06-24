@@ -14,15 +14,6 @@ import threading
 INITIAL_COMMENT = 'Initial version.'
 
 
-class ActiveModelManager(models.Manager):
-
-    def current(self):
-        return self.filter(effective_to=None)
-
-    def deleted(self):
-        return self.filter(effective_to__isnull=False)
-
-
 class AuditMixin(models.Model):
     """A model mixin that provides fields related to auditing: created/modified timestamps,
     created by/last modified by user fields.
@@ -151,14 +142,23 @@ class AuditMixin(models.Model):
             raise ValidationError(errors)
 
 
+class ActiveModelManager(models.Manager):
+    """A customised Manager class to be used for with ActiveMixin.
+    """
+    def current(self):
+        return self.filter(effective_to=None)
+
+    def deleted(self):
+        return self.filter(effective_to__isnull=False)
+
+
 class ActiveMixin(models.Model):
-    '''
-    Model mixin to allow objects to be saved as 'non-current' or 'inactive',
+    """Model mixin to allow objects to be saved as 'non-current' or 'inactive',
     instead of deleting those objects.
     The standard model delete() method is overridden.
 
     "effective_to" is used to 'delete' objects (null==not deleted).
-    '''
+    """
     effective_to = models.DateTimeField(null=True, blank=True)
     objects = ActiveModelManager()
 
@@ -185,7 +185,9 @@ class ActiveMixin(models.Model):
 
 
 class ModelDescMixin(ModelAdmin):
-
+    """A small extension to the ModelAdmin class, to add a description of the model
+    to the admin changelist view context.
+    """
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
         if hasattr(self, 'model_description'):
@@ -194,7 +196,8 @@ class ModelDescMixin(ModelAdmin):
 
 
 class ActiveAdminMixin(ModelAdmin):
-    """An override of the base ModelAdmin get_queryset method for models using ActiveMixin.
+    """An override of the base ModelAdmin get_queryset method for models using ActiveMixin,
+    so as to use the current() manager method instead of all().
     """
     def get_queryset(self, request):
         # Return 'current' (non-deleted) objects only.

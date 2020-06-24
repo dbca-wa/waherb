@@ -10,5 +10,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL('CREATE INDEX ON herbarium_texpressdata USING gin (row_text gin_trgm_ops);'),
+        migrations.RunSQL('CREATE INDEX ON herbarium_texpressdata USING GIN (row_text gin_trgm_ops);'),
     ]

@@ -63,7 +63,7 @@ TRANSACTION_TYPE_CHOICES = (
 
 
 class Transaction(AuditMixin, ActiveMixin):
-    """A transaction represents some interaction with the system by an agent that
+    """A transaction represents some interaction with the system that
     needs to be recorded in detail.
     """
     type = models.CharField(max_length=64, choices=TRANSACTION_TYPE_CHOICES)
@@ -72,35 +72,18 @@ class Transaction(AuditMixin, ActiveMixin):
     metadata = JSONField(default=dict, blank=True)
 
 
-AGENT_TYPE_CHOICES = (
-    ('Person', 'Person'),
-    ('Organisation', 'Organisation'),
+ADDRESS_TYPE_CHOICES = (
+    ('Primary mail', 'Primary mail'),
+    ('Primary physical', 'Primary physical'),
+    ('Additional mail', 'Additional mail'),
+    ('Additional physical', 'Additional physical'),
     ('Other', 'Other'),
 )
 
 
-class Agent(AuditMixin, ActiveMixin):
-    """A general-purpose model type for a person or organisation out in the world that needs
-    to be associated with other records in this system.
-    """
-    name = models.CharField(max_length=256, unique=True, help_text='A unique name for this agent.')
-    type = models.CharField(
-        max_length=64, choices=AGENT_TYPE_CHOICES, help_text='An "agent" can be a person or a group.')
-    email = models.EmailField(blank=True, null=True, help_text='A valid email address.')
-    member_of = models.ForeignKey(
-        'self', on_delete=models.SET_NULL, blank=True, null=True, related_name='members',
-        help_text='An agent can be a member of a different agent (e.g. a person can be a member of a group).')
-    attachments = models.ManyToManyField(Attachment, blank=True)
-    metadata = JSONField(default=dict, blank=True)
-
-    def __str__(self):
-        return self.name
-
-
 class Address(AuditMixin, ActiveMixin):
-    """A physical or mailing address within Australia, associated with an Agent.
+    """A physical or mailing address within Australia.
     """
-    agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name='addresses')
     address_line_1 = models.CharField(max_length=256, blank=True, null=True)
     address_line_2 = models.CharField(max_length=256, blank=True, null=True)
     suburb = models.CharField(max_length=256, blank=True, null=True)
@@ -110,14 +93,57 @@ class Address(AuditMixin, ActiveMixin):
     country = models.CharField(max_length=256, blank=True, null=True, default='Australia')
     telephone = models.CharField(max_length=32, blank=True, null=True)
     fax = models.CharField(max_length=32, blank=True, null=True)
-    is_primary = models.BooleanField(null=True)
+    type = models.CharField(max_length=64, choices=ADDRESS_TYPE_CHOICES, blank=True, null=True)
     metadata = JSONField(default=dict, blank=True)
 
     class Meta:
         verbose_name_plural = 'addresses'
 
 
+class Organisation(AuditMixin, ActiveMixin):
+    """A general-purpose model type for an organisation out in the world that needs
+    to be associated with other records in this system.
+    """
+    name = models.CharField(max_length=256, unique=True, help_text='A unique name for this organisation.')
+    email = models.EmailField(blank=True, null=True, help_text='A valid email address.')
+    address = models.ForeignKey(Address, on_delete=models.SET_NULL, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    metadata = JSONField(default=dict, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+PERSON_TYPE_CHOICES = (
+    ('Collector', 'Collector'),
+    ('Taxonomist', 'Taxonomist'),
+    ('Other', 'Other'),
+)
+
+
+class Person(AuditMixin, ActiveMixin):
+    """A general-purpose model type for a person out in the world that needs
+    to be associated with other records in this system.
+    """
+    name = models.CharField(max_length=256, unique=True, help_text='A unique name for this person.')
+    type = models.CharField(max_length=64, choices=PERSON_TYPE_CHOICES)
+    email = models.EmailField(blank=True, null=True, help_text='A valid email address.')
+    organisations = models.ManyToManyField(Organisation, blank=True)
+    addresses = models.ManyToManyField(Address, blank=True)
+    notes = models.TextField(blank=True, null=True)
+    attachments = models.ManyToManyField(Attachment, blank=True)
+    metadata = JSONField(default=dict, blank=True)
+
+    class Meta:
+        verbose_name_plural = 'people'
+
+    def __str__(self):
+        return self.name
+
+
 class Project(AuditMixin, ActiveMixin):
+    """This represents a project where one or more collecting events have been undertaken.
+    """
     name = models.CharField(max_length=256, unique=True, help_text='A unique name for this project.')
     metadata = JSONField(default=dict, blank=True)
 
@@ -126,6 +152,9 @@ class Project(AuditMixin, ActiveMixin):
 
 
 class Permit(AuditMixin, ActiveMixin):
+    """This represents a permit number that was associated with collecting event(s), and generally
+    comes out of another system.
+    """
     permit_no = models.CharField(
         max_length=256, unique=True, help_text='A unique permit number (normally generated by an external system).')
     metadata = JSONField(default=dict, blank=True)
@@ -134,11 +163,6 @@ class Permit(AuditMixin, ActiveMixin):
         return self.permit_no
 
 
-TEMPORAL_ACCURACY_CHOICES = (
-    ('Year', 'Year'),
-    ('Month', 'Month'),
-    ('Day', 'Day'),
-)
 SPATIAL_ACCURACY_CHOICES = (
     ('10000 m', '10000 m'),
     ('1000 m', '1000 m'),
@@ -148,20 +172,36 @@ SPATIAL_ACCURACY_CHOICES = (
 )
 
 
+class Location(AuditMixin, ActiveMixin):
+    """This represents a physical location in the world. It might be a point or a polygon, and it
+    might not be 100% accurate.
+    """
+    description = models.TextField(blank=True, null=True)
+    spatial_accuracy = models.CharField(max_length=64, choices=SPATIAL_ACCURACY_CHOICES, blank=True, null=True)
+    point = models.PointField(srid=4283, blank=True, null=True)
+    polygon = models.PolygonField(srid=4283, blank=True, null=True)
+    altitude = models.FloatField(blank=True, null=True, help_text='Metres above/below surface level.')
+    metadata = JSONField(default=dict, blank=True)
+
+
+TEMPORAL_ACCURACY_CHOICES = (
+    ('Year', 'Year'),
+    ('Month', 'Month'),
+    ('Day', 'Day'),
+)
+
+
 class CollectingEvent(AuditMixin, ActiveMixin):
-    """This represents a singular event where an Agent went out and collected one or more
+    """This represents a singular event where a collector went out and collected one or more
     Specimens in the world.
     """
-    agent = models.ForeignKey(Agent, on_delete=models.PROTECT, related_name='collecting_events')
+    person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name='collecting_events')
     project = models.ForeignKey(Project, on_delete=models.PROTECT, blank=True, null=True, related_name='collecting_events')
     permit = models.ForeignKey(Permit, on_delete=models.PROTECT, blank=True, null=True, related_name='collecting_events')
     date = models.DateField(blank=True, null=True)
     temporal_accuracy = models.CharField(max_length=64, choices=TEMPORAL_ACCURACY_CHOICES, blank=True, null=True)
     description = models.TextField(blank=True, null=True, help_text='A description of the collection event.')
-    location_description = models.TextField(
-        blank=True, null=True, help_text='A description of where the collection event was undertaken.')
-    point = models.PointField(srid=4283, blank=True, null=True)
-    spatial_accuracy = models.CharField(max_length=64, choices=SPATIAL_ACCURACY_CHOICES, blank=True, null=True)
+    location = models.ForeignKey(Location, on_delete=models.SET_NULL, blank=True, null=True)
     annotations = models.ManyToManyField(Annotation, blank=True)
     attachments = models.ManyToManyField(Attachment, blank=True)
     metadata = JSONField(default=dict, blank=True)
@@ -180,9 +220,9 @@ class Specimen(AuditMixin, ActiveMixin):
 
 
 class Determination(AuditMixin, ActiveMixin):
-    """This represents an event where an Agent classified a Specimen as a particular taxon.
+    """This represents an event where a person classified a Specimen as a particular taxon.
     """
-    agent = models.ForeignKey(Agent, on_delete=models.PROTECT, related_name='determiner')
+    person = models.ForeignKey(Person, on_delete=models.PROTECT, related_name='determiner')
     name = models.ForeignKey(Name, on_delete=models.PROTECT)
     specimen = models.ForeignKey(Specimen, on_delete=models.PROTECT)
     date = models.DateField()
