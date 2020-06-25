@@ -187,6 +187,9 @@ class ActiveMixin(models.Model):
 class ModelDescMixin(ModelAdmin):
     """A small extension to the ModelAdmin class, to add a description of the model
     to the admin changelist view context.
+
+    In order to then for e.g. display this description above the list view, you then need to
+    override the relevant change_list.html template.
     """
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}

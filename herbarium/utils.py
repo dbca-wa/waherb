@@ -19,7 +19,7 @@ def import_texpress_data(path='/var/www/archive/texpress_json_rows.txt'):
             TexpressData.objects.bulk_create(new_records)  # bulk_create is WAY faster.
             new_records = []
             elapsed = (datetime.now() - then).seconds
-            print('Processed {} records, {:.2f} sec/1000 records'.format(count, elapsed / (count / 1000)))
+            print('Processed {} records, {:.2f} sec/1000 records'.format(count, elapsed))
             then = datetime.now()
 
     if new_records:  # Save any remaining records in our list.
@@ -61,5 +61,5 @@ def sanitise_data():
         count += 1
         if count % 1000 == 0:
             elapsed = (datetime.now() - then).seconds
-            print('Processed {} records, {:.2f} sec/1000 records'.format(count, elapsed / (count / 1000)))
+            print('Processed {} records, {:.2f} sec/1000 records'.format(count, elapsed))
             then = datetime.now()
