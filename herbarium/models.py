@@ -3,7 +3,7 @@ from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.indexes import GinIndex
 import json
 from nomenclature.models import Name
-from waherb.utils import AuditMixin, ActiveMixin, smart_truncate
+from waherb.utils import AuditMixin, ActiveMixin
 
 
 class TexpressData(models.Model):
@@ -20,7 +20,10 @@ class TexpressData(models.Model):
         # Don't just use the string repr of the JSONField, as that outputs single quotes
         # which is confusing to end users as it differs from what's stored in the DB.
         s = '{}'.format(json.dumps(self.row, sort_keys=True, separators=(',', ':')))
-        return smart_truncate(s, length=200)
+        if len(s) < 200:
+            return s
+        else:
+            return s[:200] + '...(more)'
 
 
 ATTACHMENT_TYPE_CHOICES = (
