@@ -1,17 +1,20 @@
 # WAHerb
 
-A Django prototype to manage herbarium collection data and taxonomic
-information.
+A Django prototype to manage herbarium collection data and taxonomic information.
 
-Requires Python 3.7+. Manage project virtual environment and
-dependencies using `Poetry`.
+Requires Python 3.7+. Manage project virtual environment and dependencies using
+`Poetry`.
 
-~~~
+Example:
+
+~~~bash
 poetry install
 poetry run python manage.py check
 ~~~
 
 Define project-local variables in a `.env` file. As a minimum we need `DATABASE_URL`.
+`GEOSERVER_WMS_URL` is also needed to display spatial data on the Naturemap map
+widget.
 
 # Project application descriptions
 
@@ -46,13 +49,13 @@ the edge may be recorded in the JSON field.
 
 ## naturemap
 
-This application is a prototype search interface for migrated Naturemap data, in
+This application is a prototype search interface for migrated Naturemap data in
 order to test the performance/practicality of using PostgreSQL text search to
 serve Naturemap data in a browser. It consists of a couple of API endpoints to
 expose species name information and a basic map widget to allow searching on
 that data.
 
-# graphic
+## graphic
 
 This application is another prototype to represent a graph database in a RDMS
 such as PostgreSQL, using the Django ContentType mechanism. `Node` objects can

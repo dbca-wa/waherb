@@ -3,7 +3,7 @@ from datetime import datetime
 from .models import TexpressData
 
 
-def import_texpress_data(path='/var/www/archive/texpress_json_rows.txt'):
+def import_texpress_data(path='/var/www/archive/texpress_json_rows.json'):
     """Utility function to import Texpress data from the flat file output.
     """
     f = open(path)
