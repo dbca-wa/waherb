@@ -109,6 +109,14 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 category = "main"
+description = "Render Django Page objects as Bootstrap 3.x/4.x Pagination compatible HTML"
+name = "django-bootstrap-pagination"
+optional = false
+python-versions = "*"
+version = "1.7.1"
+
+[[package]]
+category = "main"
 description = "Best way to have Django DRY forms"
 name = "django-crispy-forms"
 optional = false
@@ -440,8 +448,19 @@ optional = false
 python-versions = "*"
 version = "0.2.4"
 
+[[package]]
+category = "main"
+description = "Base HTML templates for DBCA Django projects"
+name = "webtemplate-dbca"
+optional = false
+python-versions = "*"
+version = "1.2.1"
+
+[package.dependencies]
+Django = ">=2.1"
+
 [metadata]
-content-hash = "a5104559a7489633ba37cfaaece1ca6b2538e2af13b593a3a69aaedeecee526f"
+content-hash = "282ca5a74cb7c96f82f8e6acafb6630fbb52127dee8e94c00636fe3e47a0b974"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -486,6 +505,10 @@ dj-static = [
 django = [
     {file = "Django-3.0.7-py3-none-any.whl", hash = "sha256:e1630333248c9b3d4e38f02093a26f1e07b271ca896d73097457996e0fae12e8"},
     {file = "Django-3.0.7.tar.gz", hash = "sha256:5052b34b34b3425233c682e0e11d658fd6efd587d11335a0203d827224ada8f2"},
+]
+django-bootstrap-pagination = [
+    {file = "django-bootstrap-pagination-1.7.1.tar.gz", hash = "sha256:69d826d92217325611cb86e49944d8261e3c92eaa4deafea5a605d79fd363883"},
+    {file = "django_bootstrap_pagination-1.7.1-py3-none-any.whl", hash = "sha256:47e742679cf109e12f10ae09d5263433f94440818cf7b023e90a3f5252849639"},
 ]
 django-crispy-forms = [
     {file = "django-crispy-forms-1.9.1.tar.gz", hash = "sha256:fbe9c2c9698b6590afe37940cb08194d1e722015f6bc5bee83f679362406ea30"},
@@ -626,4 +649,7 @@ urllib3 = [
 wcwidth = [
     {file = "wcwidth-0.2.4-py2.py3-none-any.whl", hash = "sha256:79375666b9954d4a1a10739315816324c3e73110af9d0e102d906fdb0aec009f"},
     {file = "wcwidth-0.2.4.tar.gz", hash = "sha256:8c6b5b6ee1360b842645f336d9e5d68c55817c26d3050f46b235ef2bc650e48f"},
+]
+webtemplate-dbca = [
+    {file = "webtemplate-dbca-1.2.1.tar.gz", hash = "sha256:ff6f9e56fc96f8f50d1baa4b5e77cebb789a7e753dee8628892e3eb8513d8d54"},
 ]

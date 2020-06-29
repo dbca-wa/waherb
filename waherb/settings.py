@@ -27,9 +27,15 @@ INSTALLED_APPS = [
     'reversion',
     'mptt',
     'leaflet',
+    'crispy_forms',
+    'webtemplate_dbca',
+    'bootstrap_pagination',
     # Project applications:
     'nomenclature',
     'herbarium',
+    'naturemap',
+    'crossreference',
+    'graphic',
 ]
 
 MIDDLEWARE = [
@@ -96,3 +102,12 @@ if not os.path.exists(os.path.join(BASE_DIR, 'media')):
     os.mkdir(os.path.join(BASE_DIR, 'media'))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+# crispy_forms settings
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_FAIL_SILENTLY = False
+
+
+# Spatial service URLs
+GEOSERVER_WMS_URL = os.getenv('GEOSERVER_WMS_URL', '')

@@ -7,16 +7,14 @@ def import_wacensus():
     """This script assumes that you have kingdoms.csv, names.csv and taxon_tree.csv files
     in the project root.
     """
-    """
     print('Creating Kingdoms')
     f = open('kingdoms.csv', 'r')
     reader = csv.reader(f)
     next(reader)
 
     for row in reader:
-        Name.objects.create(name=row[0], rank='Kingdom')
+        name, created = Name.objects.get_or_create(name=row[0], rank='Kingdom')
 
-    """
     print('Creating names')
     f = open('names.csv', 'r')
     reader = csv.reader(f)

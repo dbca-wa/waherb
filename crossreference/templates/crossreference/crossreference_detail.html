@@ -1,0 +1,33 @@
+{% extends "webtemplate_dbca/base_b4.html" %}
+
+{% block extra_style %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.0.0/jsoneditor.min.css" integrity="sha256-thQmdfrg82/N5u9ybMxam1RKdSfaxOPCgl5q9AI/mDI=" crossorigin="anonymous" />
+{% endblock %}
+
+{% block navbar_links %}{% endblock %}
+
+{% block page_content %}
+<div class="col-xs-12 col-sm-8 col-md-9 col-lg-10" id="div_page_content">
+    <h1>Cross reference detail</h1>
+    <div>
+        <a class="btn btn-primary" href="{% url 'crossreference:cross_reference_list' %}">All cross references</a>
+        <a class="btn btn-primary" href="{% url 'crossreference:cross_reference_update' pk=object.pk %}">Update this cross reference</a>
+    </div>
+    <hr>
+    <h4>{{ object }}</h4>
+    <h4>Metadata:</h4>
+    <div id="jsoneditor" style="height: 500px;"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.0.0/jsoneditor-minimalist.min.js" integrity="sha256-0Pz5AtfDtmyl0W0hpZTu10k7HMW5Y5mI28yZcwh6kJE=" crossorigin="anonymous"></script>
+<script>
+  const container = document.getElementById('jsoneditor');
+  const options = {
+    mode: 'view'
+  }
+  const json = JSON.parse('{{ obj_metadata|escapejs }}');
+  const editor = new JSONEditor(container, options, json);
+</script>
+{% endblock %}

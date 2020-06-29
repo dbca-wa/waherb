@@ -1,0 +1,72 @@
+{% extends "webtemplate_dbca/base_b4.html" %}
+{% load crispy_forms_tags %}
+
+{% block extra_style %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.0.0/jsoneditor.min.css" integrity="sha256-thQmdfrg82/N5u9ybMxam1RKdSfaxOPCgl5q9AI/mDI=" crossorigin="anonymous" />
+{% endblock %}
+
+{% block navbar_links %}{% endblock %}
+
+{% block page_content %}
+<h1>Create cross reference</h1>
+{% if form.errors %}
+<div class="alert alert-danger" role="alert">Please correct the error(s) below</div>
+{% endif %}
+{#{% crispy form %}#}
+<br>
+<form method="POST">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="col-md-4">
+            {{ form.content_type|as_crispy_field }}
+            {{ form.object_id|as_crispy_field }}
+        </div>
+        <div class="col-md-4">
+            {{ form.ref_type|as_crispy_field }}
+        </div>
+        <div class="col-md-4">
+            {{ form.target_content_type|as_crispy_field }}
+            {{ form.target_object_id|as_crispy_field }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            <p>Metadata</p>
+            <div id="jsoneditor" style="height: 500px;"></div>
+        </div>
+    </div>
+    <div class="form-row">
+        <input type="submit" name="submit" value="Save" class="btn btn-primary" id="id-submit">
+    </div>
+    {{ form.metadata }}
+</form>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.11/ace.min.js" integrity="sha256-qCCcAHv/Z0u7K344shsZKUF2NR+59ooA3XWRj0LPGIQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.0.0/jsoneditor-minimalist.min.js" integrity="sha256-0Pz5AtfDtmyl0W0hpZTu10k7HMW5Y5mI28yZcwh6kJE=" crossorigin="anonymous"></script>
+<script>
+const container = document.getElementById("jsoneditor");
+const metadata_field = document.getElementById("id_metadata");
+metadata_field.style.visibility = "hidden";
+const save_button = document.getElementById("id-submit");
+const options = {
+    mode: 'code',
+    modes: ['code', 'tree', 'preview'],
+    onValidate: function(json) {
+        metadata_field.value = editor.getText();
+        save_button.disabled = false;
+    },
+    onValidationError: function(errors) {
+        save_button.disabled = true;
+    },
+};
+{% if obj_metadata %}
+  const json = JSON.parse('{{ obj_metadata|escapejs }}');
+{% else %}
+const json = {}
+{% endif %}
+var editor = new JSONEditor(container, options, json);
+</script>
+{% endblock %}
