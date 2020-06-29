@@ -2,8 +2,8 @@
 
 A Django prototype to manage herbarium collection data and taxonomic information.
 
-Requires Python 3.7+. Manage project virtual environment and dependencies using
-`Poetry`.
+Requires Python 3.7+ and PostgreSQL 11+ with `postgis` and `pg_trgm` extensions
+installed. Manage project virtual environment and dependencies using `Poetry`.
 
 Example:
 

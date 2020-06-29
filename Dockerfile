@@ -20,7 +20,10 @@ RUN poetry config virtualenvs.create false \
 # Install the project.
 FROM python_libs_waherb
 COPY manage.py gunicorn.py ./
+COPY crossreference ./crossreference
+COPY graphic ./graphic
 COPY herbarium ./herbarium
+COPY naturemap ./naturemap
 COPY nomenclature ./nomenclature
 COPY waherb ./waherb
 RUN python manage.py collectstatic --noinput
