@@ -109,6 +109,14 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 category = "main"
+description = "Best way to have Django DRY forms"
+name = "django-crispy-forms"
+optional = false
+python-versions = ">=3.5"
+version = "1.9.1"
+
+[[package]]
+category = "main"
 description = "foreman reads from .env. manage.py doesn't. Let's fix that."
 name = "django-dotenv"
 optional = false
@@ -433,7 +441,7 @@ python-versions = "*"
 version = "0.2.4"
 
 [metadata]
-content-hash = "0cbf11122b6d09396d4ed04531705c17d031d2a7630831700ba251af38cf3483"
+content-hash = "a5104559a7489633ba37cfaaece1ca6b2538e2af13b593a3a69aaedeecee526f"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -478,6 +486,10 @@ dj-static = [
 django = [
     {file = "Django-3.0.7-py3-none-any.whl", hash = "sha256:e1630333248c9b3d4e38f02093a26f1e07b271ca896d73097457996e0fae12e8"},
     {file = "Django-3.0.7.tar.gz", hash = "sha256:5052b34b34b3425233c682e0e11d658fd6efd587d11335a0203d827224ada8f2"},
+]
+django-crispy-forms = [
+    {file = "django-crispy-forms-1.9.1.tar.gz", hash = "sha256:fbe9c2c9698b6590afe37940cb08194d1e722015f6bc5bee83f679362406ea30"},
+    {file = "django_crispy_forms-1.9.1-py2.py3-none-any.whl", hash = "sha256:ad943285508f0ed0e271d00399b9399c22b8795a4f969029bce0fd29522a8e2d"},
 ]
 django-dotenv = [
     {file = "django-dotenv-1.4.2.tar.gz", hash = "sha256:3812bb0f4876cf31f902aad140f0645e120e51ee30eb7c40c22050f58a0e4adb"},
