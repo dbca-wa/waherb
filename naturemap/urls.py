@@ -4,7 +4,7 @@ from .views import TaxonLocationSearch, TaxonLocationNameAPI, TaxonLocationAreaA
 
 app_name = 'crossreference'
 urlpatterns = [
-    path('api/name/', TaxonLocationNameAPI.as_view(), name='api_taxonlocation_name'),
-    path('api/area/', TaxonLocationAreaAPI.as_view(), name='api_taxonlocation_area'),
+    path('naturemap/api/name/', TaxonLocationNameAPI.as_view(), name='api_taxonlocation_name'),
+    path('naturemap/api/area/', TaxonLocationAreaAPI.as_view(), name='api_taxonlocation_area'),
     path('naturemap/', TaxonLocationSearch.as_view(), name='taxonlocation_search'),
 ]

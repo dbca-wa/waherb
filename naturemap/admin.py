@@ -14,3 +14,4 @@ class TaxaLocationAdmin(WALeafletGeoAdmin):
     search_fields = (
         'name', 'published_name__name', 'supra', 'family', 'kingdom', 'vernacular', 'survey',
         'source__name')
+    show_full_result_count = False
