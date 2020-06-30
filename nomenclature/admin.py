@@ -33,7 +33,6 @@ class ReferenceAdmin(ModelDescMixin, ActiveAdminMixin, VersionAdmin):
     model_description = """A reference from which taxonomic-relevant information is extracted and
         used to classify specimens into taxonomic groups."""
     search_fields = ('title',)
-    change_list_template = 'admin/nomenclature/change_list.html'
 
     def title_trunc(self, obj):
         return str(obj)
@@ -74,7 +73,6 @@ class NameAdmin(ModelDescMixin, VersionAdmin):
     model_description = 'A scientific name that has been classified into a taxonomic tree.'
     raw_id_fields = ('references', 'parent', 'basionym')
     search_fields = ('name', 'rank', 'parent__name', 'basionym__name')
-    change_list_template = 'admin/nomenclature/change_list.html'
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
