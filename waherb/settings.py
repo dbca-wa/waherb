@@ -54,7 +54,7 @@ ROOT_URLCONF = 'waherb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': (os.path.join(BASE_DIR, 'waherb', 'templates'),),
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -62,6 +62,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'waherb.context_processors.from_settings',
             ],
         },
     },
@@ -96,6 +97,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+
 # Media uploads
 # Ensure that the media directory exists:
 if not os.path.exists(os.path.join(BASE_DIR, 'media')):
@@ -111,3 +113,8 @@ CRISPY_FAIL_SILENTLY = False
 
 # Spatial service URLs
 GEOSERVER_WMS_URL = os.getenv('GEOSERVER_WMS_URL', '')
+
+
+# Site settings
+ENVIRONMENT_NAME = os.getenv('ENVIRONMENT_NAME', '')
+ENVIRONMENT_COLOUR = os.getenv('ENVIRONMENT_COLOUR', '')
