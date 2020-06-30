@@ -9,6 +9,7 @@ from .models import TaxonLocation
 
 class TaxonLocationNameAPI(View):
     """Lightweight API endpoint to query TaxonLocation objects based upon name.
+    Reference: https://www.psycopg.org/docs/usage.html#passing-parameters-to-sql-queries
     """
     http_method_names = ['get']
 
@@ -30,19 +31,16 @@ class TaxonLocationNameAPI(View):
         # Query unique names based on passed-in param `q`:
         if 'q' in request.GET and request.GET['q']:
             cursor = connection.cursor()
-            sql = """SELECT DISTINCT name
-            FROM naturemap_taxonlocation
-            WHERE name ILIKE '%%{}%%'""".format(request.GET['q'])
-            cursor.execute(sql)
+            sql = 'SELECT DISTINCT name FROM naturemap_taxonlocation WHERE name ILIKE %s'
+            params = ('%{}%'.format(request.GET['q']),)
+            cursor.execute(sql, params)
             rows = [row[0] for row in cursor.fetchall()]
         # Query sample points based on passed in param `name` (assumes exact, case-insenstive match):
         elif 'name' in request.GET and request.GET['name']:
-            name = request.GET['name']
             cursor = connection.cursor()
-            sql = """SELECT id, name, ST_X(point), ST_Y(point)
-            FROM naturemap_taxonlocation
-            WHERE name ILIKE '{}%%'""".format(name)
-            cursor.execute(sql)
+            sql = 'SELECT id, name, ST_X(point), ST_Y(point) FROM naturemap_taxonlocation WHERE name ILIKE %s'
+            params = ('{}%'.format(request.GET['name']),)
+            cursor.execute(sql, params)
             rows = [{'id': row[0], 'name': row[1], 'lon': row[2], 'lat': row[3]} for row in cursor.fetchall()]
         else:
             rows = []
@@ -53,6 +51,7 @@ class TaxonLocationNameAPI(View):
 class TaxonLocationAreaAPI(View):
     """API endpoint to equery TaxonLocation objects based on spatial area.
     Area can be supplied as a buffered point (point, radius in metres) or as a polygon (WKT).
+    Reference: https://www.psycopg.org/docs/usage.html#passing-parameters-to-sql-queries
     """
     http_method_names = ['get']
 
@@ -71,25 +70,22 @@ class TaxonLocationAreaAPI(View):
 
         # Query by point and radius:
         if 'point' in request.GET and request.GET['point']:
-            point = request.GET['point']  # Point having format LON,LAT (GDA94/EPSG 4283 assumed).
+            lon, lat = [float(i) for i in request.GET['point'].split(',')]
             if 'r' in request.GET and request.GET['r']:
-                r = float(request.GET['r'])  # Radius in metres.
+                radius = float(request.GET['r'])  # Radius in metres.
             else:
-                r = 100.0
-            sql = """SELECT id, name, ST_X(point), ST_Y(point)
-            FROM naturemap_taxonlocation
-            WHERE ST_DWithin(geography(point), ST_SetSRID(ST_MakePoint({}), 4283), {})""".format(point, r)
+                radius = 100.0
+            sql = 'SELECT id, name, ST_X(point), ST_Y(point) FROM naturemap_taxonlocation WHERE ST_DWithin(geography(point), ST_SetSRID(ST_MakePoint(%s,%s), 4283), %s)'
+            params = (lon, lat, radius)
             cursor = connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, params)
             rows = [{'id': row[0], 'name': row[1], 'lon': row[2], 'lat': row[3]} for row in cursor.fetchall()]
         # Query by area:
         elif 'poly' in request.GET and request.GET['poly']:
-            poly = request.GET['poly']  # WKT string of a polygon (GDA94/EPSG 4283 assumed).
-            sql = """SELECT id, name, ST_X(point), ST_Y(point)
-            FROM naturemap_taxonlocation
-            WHERE ST_Within(point, ST_GeomFromText('{}', 4283))""".format(poly)
+            params = (request.GET['poly'],)  # WKT string of a polygon (GDA94/EPSG 4283 assumed).
+            sql = 'SELECT id, name, ST_X(point), ST_Y(point) FROM naturemap_taxonlocation WHERE ST_Within(point, ST_GeomFromText(%s, 4283))'
             cursor = connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(sql, params)
             rows = [{'id': row[0], 'name': row[1], 'lon': row[2], 'lat': row[3]} for row in cursor.fetchall()]
         else:
             rows = []
