@@ -29,6 +29,14 @@ This application also represents the taxonomic tree of names via `django-mptt`;
 names have an optional taxonomic parent recorded, which can then be used to
 define the tree of taxonomic relationships.
 
+To import data from WACensus into this application, you need to generate three
+CSV files from WACensus data and save them to the project root (column headings
+are shown below to indicate the required schema):
+
+1. `kingdoms.csv` - KINGDOM_NAME (list of all Kingdoms)
+1. `names.csv` - NAME,TAXONOMIC_RANK,KINGDOM,NAME_ID (list of all taxa)
+1. `taxon_tree.csv`- NAME,PARENT_NAME
+
 ## herbarium
 
 This application is a prototype repository of Herbarium specimen data. It may be

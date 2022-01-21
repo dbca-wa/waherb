@@ -38,6 +38,10 @@ SUPRA_CODE_MAP = {
 class TaxonLocation(AuditMixin, ActiveMixin):
     """This model represents a location in the world where a sample was collected, and later identified
     as a particular taxon.
+
+    The intent of this model is to fully denormalise the data which is filtered and displayed in
+    Naturemap, for performance and ergonomic reasons (these data might have multiple sources, in
+    different schemas and formats).
     """
     name = models.CharField(max_length=512, help_text='The published scientific name of this taxon.')
     point = models.PointField(srid=4283)
