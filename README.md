@@ -63,6 +63,11 @@ serve Naturemap data in a browser. It consists of a couple of API endpoints to
 expose species name information and a basic map widget to allow searching on
 that data.
 
+To import Naturemap data into this application, you need to generate a CSV file
+from Naturemap data using the `nmap_migrate` application and save it somewhere
+accessible. Thereafter you can use `utils.import_naturemap_data` to import the
+data.
+
 ## graphic
 
 This application is another prototype to represent a graph database in a RDMS
