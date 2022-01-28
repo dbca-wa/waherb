@@ -98,5 +98,5 @@ class TaxonLocationSearch(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['GEOSERVER_WMS_URL'] = settings.GEOSERVER_WMS_URL
+        context['GEOSERVER_WMTS_URL'] = settings.GEOSERVER_WMTS_URL
         return context

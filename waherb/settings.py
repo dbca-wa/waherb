@@ -113,6 +113,7 @@ CRISPY_FAIL_SILENTLY = False
 
 # Spatial service URLs
 GEOSERVER_WMS_URL = os.getenv('GEOSERVER_WMS_URL', '')
+GEOSERVER_WMTS_URL = os.getenv('GEOSERVER_WMTS_URL', '')
 
 
 # Site settings

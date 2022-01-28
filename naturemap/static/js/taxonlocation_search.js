@@ -1,42 +1,29 @@
 "use strict";
 
 // NOTE: the following global variables need to be set prior to loading this script:
-// * geoserver_wms_url
+// * geoserver_wmts_url
 // Define tile layers.
-var landgateOrthomosaic = L.tileLayer.wms(
-  geoserver_wms_url,
+const landgateOrthomosaic = L.tileLayer(
+  geoserver_wmts_url + "?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=gda94&TileMatrix=gda94:{z}&TileCol={x}&TileRow={y}&format=image/png&layer=landgate:virtual_mosaic",
   {
-    crs: L.CRS.EPSG4326,
-    layers: 'landgate:virtual_mosaic',
     tileSize: 1024,
-    format: 'image/jpeg',
-    tiled: true,
-    version: '1.1.1',
-  }
+    zoomOffset: -2,
+  },
 );
-var mapboxStreets = L.tileLayer.wms(
-  geoserver_wms_url,
+const mapboxStreets = L.tileLayer(
+  geoserver_wmts_url + "?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=gda94&TileMatrix=gda94:{z}&TileCol={x}&TileRow={y}&format=image/png&layer=dbca:mapbox-streets",
   {
-    crs: L.CRS.EPSG4326,
-    layers: 'dbca:mapbox-streets',
     tileSize: 1024,
-    format: 'image/jpeg',
-    tiled: true,
-    version: '1.1.1',
-  }
+    zoomOffset: -2,
+  },
 );
-var dbcaLands = L.tileLayer.wms(
-  geoserver_wms_url,
+const dbcaTenure = L.tileLayer(
+  geoserver_wmts_url + "?service=WMTS&request=GetTile&version=1.0.0&tilematrixset=gda94&TileMatrix=gda94:{z}&TileCol={x}&TileRow={y}&format=image/png&transparent=true&layer=cddp:legislated_lands_and_waters",
   {
-    crs: L.CRS.EPSG4326,
-    layers: 'cddp:legislated_lands_and_waters',
     opacity: 0.75,
     tileSize: 1024,
-    format: 'image/png',
-    tiled: true,
-    transparent: true,
-    version: '1.1.1',
-  }
+    zoomOffset: -2,
+  },
 );
 var miningTenements = L.tileLayer.wms(
   "https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/Industry_and_Mining/MapServer/WMSServer",
@@ -68,7 +55,7 @@ var baseMaps = {
   "No base layer": empty,
 };
 var overlayMaps = {
-  "DBCA tenure": dbcaLands,
+  "DBCA tenure": dbcaTenure,
   "Mining tenements": miningTenements,
 };
 
