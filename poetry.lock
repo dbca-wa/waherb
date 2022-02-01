@@ -90,14 +90,14 @@ static3 = "*"
 
 [[package]]
 name = "django"
-version = "3.0.14"
+version = "3.1.14"
 description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
 category = "main"
 optional = false
 python-versions = ">=3.6"
 
 [package.dependencies]
-asgiref = ">=3.2,<4.0"
+asgiref = ">=3.2.10,<4"
 pytz = "*"
 sqlparse = ">=0.2.2"
 
@@ -452,7 +452,7 @@ Django = ">=2.1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "9612dfc06abe5551ccc9b13c37c3f0bbdccc4bd10f2efb95710de18734c729ee"
+content-hash = "74f146730bfae6604e1dec986acf34ea052af143b40c29bd8053123fdf51491a"
 
 [metadata.files]
 appnope = [
@@ -494,8 +494,8 @@ dj-static = [
     {file = "dj-static-0.0.6.tar.gz", hash = "sha256:032ec1c532617922e6e3e956d504a6fb1acce4fc1c7c94612d0fda21828ce8ef"},
 ]
 django = [
-    {file = "Django-3.0.14-py3-none-any.whl", hash = "sha256:9bc7aa619ed878fedba62ce139abe663a147dccfd20e907725ec11e02a1ca225"},
-    {file = "Django-3.0.14.tar.gz", hash = "sha256:d58d8394036db75a81896037d757357e79406e8f68816c3e8a28721c1d9d4c11"},
+    {file = "Django-3.1.14-py3-none-any.whl", hash = "sha256:0fabc786489af16ad87a8c170ba9d42bfd23f7b699bd5ef05675864e8d012859"},
+    {file = "Django-3.1.14.tar.gz", hash = "sha256:72a4a5a136a214c39cf016ccdd6b69e2aa08c7479c66d93f3a9b5e4bb9d8a347"},
 ]
 django-bootstrap-pagination = [
     {file = "django-bootstrap-pagination-1.7.1.tar.gz", hash = "sha256:69d826d92217325611cb86e49944d8261e3c92eaa4deafea5a605d79fd363883"},
