@@ -23,7 +23,7 @@ webtemplate-dbca = "^1.2.1"
 django-bootstrap-pagination = "^1.7.1"
 
 [tool.poetry.dev-dependencies]
-ipython = "^7.15.0"
+ipython = "^7.16.3"
 ipdb = "^0.13.2"
 pygraphviz = "^1.5"
 
