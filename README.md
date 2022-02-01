@@ -37,6 +37,26 @@ are shown below to indicate the required schema):
 1. `names.csv` - NAME,TAXONOMIC_RANK,KINGDOM,NAME_ID (list of all taxa)
 1. `taxon_tree.csv`- NAME,PARENT_NAME
 
+Example SQL used to generate the output CSV:
+
+    -- kingdoms.csv:
+    SELECT name
+    FROM hbtnames
+    WHERE rank_name = 'Kingdom';
+
+    -- names.csv
+    SELECT DISTINCT hn.name, hn.rank_name taxonomic_rank, hk.kingdom_name kingdom, hn.name_id
+    FROM hbtnames hn
+    LEFT JOIN hbtkingdoms hk ON hn.kingdom_id = hk.kingdom_id
+    WHERE hn.is_current = 'Y';
+
+    -- taxon_tree.csv
+    SELECT DISTINCT hn1.name, hn2.name parent_name
+    FROM hbtparents hp
+    JOIN hbtnames hn1 ON hn1.name_id = hp.name_id
+    JOIN hbtnames hn2 ON hn2.name_id = hp.parent_nid
+    WHERE hn1.name != hn2.name;
+
 ## herbarium
 
 This application is a prototype repository of Herbarium specimen data. It may be
